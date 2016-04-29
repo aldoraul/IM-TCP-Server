@@ -23,7 +23,7 @@
 
 // get sockaddr, IPv4 or IPv6
 
-#define MYPORT "23456"
+#define MYPORT "34567"
 #define MAXBUFFLEN 100
 #define BACKLOG 10	 // how many pending connections queue will hold
 
@@ -137,9 +137,29 @@ int main(void){
 						FD_SET(newfd, &master);  // add to master
 						if(newfd>fdmax)		// keep track of the max
 							fdmax=newfd;
-						}
+						//if((numbytes=recv(newfd, buf, sizeof buf, 0)<=0)){
+						//	if(numbytes == 0){
+						//		printf("select HERE server: socket %d hung up\n", i);
+						//	}else{
+						//		perror("??recv");
+						//		close(newfd);
+						//		FD_CLR(newfd, &master);
+						//	}
+							
+					//	}else{	
+					//		std::cout<<"here??"<<std::endl;
+					//		std::cout<<numbytes<<std::endl;
+
+					//		buf[numbytes] = '\0';
+					//		std::cout<< buf << std::endl;
+						
+						//if(send(i, "cool" ,5,0)<0){
+						//	std::cout<<"Send reply failed"<<std::endl;
+							
+						
+					}
 				}else{
-					if((numbytes=recv(i,buf, sizeof buf,0)<=0)){
+					if((numbytes=recv(i,buf, sizeof buf,0))<=0){
 						if(numbytes ==0){
 							printf("select server: socket %d hung up\n",i);
 						}
@@ -154,9 +174,12 @@ int main(void){
 						std::cout<< buf << std::endl;	
 						}	
 					}
-				}
+				
 			}
+				
+			
 		}
+	}
 	return 0;
 }
 
