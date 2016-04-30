@@ -18,7 +18,7 @@
 #include<sys/wait.h>
 #include<signal.h>
 #include<iostream>
-#include"cipher.h"
+//#include"cipher.h"
 #include"functions.h"
 
 // get sockaddr, IPv4 or IPv6
@@ -37,7 +37,6 @@ struct active_user{
          user(user1), addr(addr1) {}
 
 };
-
 
 int main(void){
 
@@ -115,8 +114,6 @@ int main(void){
 	struct timeval tv;
 	tv.tv_sec = 2;
 	tv.tv_usec = 500000;
-	struct sockaddr_storage remoteaddr; 
-	socklen_t addrlen;
 	
 	while(1){
 		read_fds = master;
@@ -124,7 +121,9 @@ int main(void){
 			perror("select");
 			exit(4);
 		}
-	
+		std::string user = "";
+		struct sockaddr_storage remoteaddr;	
+		socklen_t addrlen;
 		for (int i = 0; i <= fdmax; i++) {			
 			if (FD_ISSET(i, &read_fds)) { // we got one conncetion!!	
 				if (i == sockfd) {// handle new connections
@@ -136,27 +135,7 @@ int main(void){
 					else{
 						FD_SET(newfd, &master);  // add to master
 						if(newfd>fdmax)		// keep track of the max
-							fdmax=newfd;
-						//if((numbytes=recv(newfd, buf, sizeof buf, 0)<=0)){
-						//	if(numbytes == 0){
-						//		printf("select HERE server: socket %d hung up\n", i);
-						//	}else{
-						//		perror("??recv");
-						//		close(newfd);
-						//		FD_CLR(newfd, &master);
-						//	}
-							
-					//	}else{	
-					//		std::cout<<"here??"<<std::endl;
-					//		std::cout<<numbytes<<std::endl;
-
-					//		buf[numbytes] = '\0';
-					//		std::cout<< buf << std::endl;
-						
-						//if(send(i, "cool" ,5,0)<0){
-						//	std::cout<<"Send reply failed"<<std::endl;
-							
-						
+							fdmax=newfd;					
 					}
 				}else{
 					if((numbytes=recv(i,buf, sizeof buf,0))<=0){
@@ -170,8 +149,10 @@ int main(void){
 							}
 						}
 					else{
+						std::string dMessage = "";
 						buf[numbytes] = '\0';
-						std::cout<< buf << std::endl;	
+					 	dMessage = decryptMessage(buf);	
+						std::cout<< dMessage  << std::endl;	
 						}	
 					}
 				
