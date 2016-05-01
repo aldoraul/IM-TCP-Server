@@ -18,6 +18,7 @@
 #include<sys/wait.h>
 #include<signal.h>
 #include<iostream>
+#include<list>
 //#include"cipher.h"
 #include"functions.h"
 
@@ -29,14 +30,6 @@
 
 //	#define ADDR_LEN 50
 
-struct active_user{
-        std::string user;
-        struct sockaddr_storage addr;
-
-        active_user(std::string user1, struct sockaddr_storage addr1):
-         user(user1), addr(addr1) {}
-
-};
 
 int main(void){
 
@@ -45,7 +38,7 @@ int main(void){
 	struct addrinfo hints, *servinfo, *p;
 	int numbytes;
 	int rv;
-	struct sockaddr_storage their_addr;
+	std::list<active_user> users;
 /*	Code from slides - Iterative - Connetion
 
 
@@ -54,9 +47,8 @@ int main(void){
 	End of structs from slides */
 
 	
-	active_user("", their_addr);
+	//active_user("", their_addr);
 	
-	char buf[MAXBUFFLEN];
 	//	char strptr[ADDR_LEN];
 	//	socklen_t addr_len;
 	int yes = 1;
@@ -121,10 +113,11 @@ int main(void){
 			perror("select");
 			exit(4);
 		}
-		std::string user = "";
 		struct sockaddr_storage remoteaddr;	
 		socklen_t addrlen;
 		for (int i = 0; i <= fdmax; i++) {			
+			
+			char buf[MAXBUFFLEN];
 			if (FD_ISSET(i, &read_fds)) { // we got one conncetion!!	
 				if (i == sockfd) {// handle new connections
 					addrlen = sizeof remoteaddr;
@@ -150,9 +143,22 @@ int main(void){
 						}
 					else{
 						std::string dMessage = "";
+						std::string user = "";
 						buf[numbytes] = '\0';
 					 	dMessage = decryptMessage(buf);	
 						std::cout<< dMessage  << std::endl;	
+						int k = 2;
+						while(dMessage[k] != ';'){
+							user += dMessage[k];
+							k++;
+						}
+						std::cout<<user<<std::endl;
+						std::cout<<getAddr(i)<<std::endl;
+						std::cout<<getPort(dMessage)<<std::endl;
+						//struct active_user newUser = active_user(user, getAddr(i), getPort(dMessage));
+					 	//std::cout<< newUser.user << std::endl<<newUser.addr<<std::endl<<newUser.port<<std::endl;		
+						
+						//users.push_back(newUser);	// getUser creates an new active_user
 						}	
 					}
 				

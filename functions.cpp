@@ -5,8 +5,10 @@
 
 //#include<stdio.h>
 //#include<netinet/in.h>
+#include<arpa/inet.h>
 #include"functions.h"
 #include<iostream>
+
 void *get_in_addr(struct sockaddr *sa){
 	if(sa->sa_family == AF_INET){
 		return &(((struct sockaddr_in*)sa)->sin_addr);
@@ -30,3 +32,36 @@ std::string decryptMessage(std::string buf){
 	}
 	return buf;
 }
+
+std::string getAddr(int fd){
+	struct sockaddr_storage addr;
+	socklen_t len;
+	char str[INET6_ADDRSTRLEN];
+	std::string clientAddr = "";
+
+	getpeername(fd, (struct sockaddr*)&addr, &len);
+	if(addr.ss_family == AF_INET){
+		struct sockaddr_in *s = (struct sockaddr_in *)&addr;
+		inet_ntop(AF_INET, &s->sin_addr, str, sizeof str);
+	}else{
+		struct sockaddr_in6 *s = (sockaddr_in6 *)&addr;
+		inet_ntop(AF_INET6, &s->sin6_addr, str, sizeof str);
+	}
+	clientAddr = str;
+	return clientAddr;
+}
+
+std::string getPort(std::string buf){
+	std::string port = "";
+	int start = 2;
+	while(buf[start] != ';')
+        	start++;
+	start++;
+	while(buf[start] != '#'){
+		port += buf[start];
+		start++;
+	}
+	return port;
+}
+
+
