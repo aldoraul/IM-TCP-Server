@@ -8,7 +8,7 @@
 #include<arpa/inet.h>
 #include"functions.h"
 #include<iostream>
-
+#include <sys/socket.h>
 void *get_in_addr(struct sockaddr *sa){
 	if(sa->sa_family == AF_INET){
 		return &(((struct sockaddr_in*)sa)->sin_addr);
@@ -33,9 +33,25 @@ std::string decryptMessage(std::string buf){
 	return buf;
 }
 
+std::string encryptMessage(std::string buf){
+	int recv_size = buf.length();
+	
+	int next = 0;
+	for(int i = 0; i < recv_size; i++){
+		if(buf[i] == ';'){
+			next = ++i;
+			break;
+		}
+	}
+	for(int j = next; j < recv_size; j++){
+		buf[j] = encrypt(buf[j]);
+	}
+	return buf;
+}
+
 std::string getAddr(int fd){
 	struct sockaddr_storage addr;
-	socklen_t len;
+	socklen_t len = sizeof(addr);
 	char str[INET6_ADDRSTRLEN];
 	std::string clientAddr = "";
 
