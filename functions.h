@@ -24,6 +24,8 @@ struct active_user {
 	std::string port;
 	active_user(std::string user1, std::string addr1, std::string port1) :
 		user(user1), addr(addr1), port(port1) {}
+	active_user() :
+		user(""), addr(""), port("") {}
 
 };
 
