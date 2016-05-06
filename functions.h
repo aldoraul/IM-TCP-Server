@@ -13,8 +13,10 @@
 #include"cipher.h"
 
 void *get_in_addr(struct sockaddr *sa);
+
 std::string decryptMessage(std::string);
 
+std::string encryptMessage(std::string);
 
 struct active_user {
 	std::string user;
